@@ -20,7 +20,6 @@ print(f1.columns)
 del f1['basisofrecord']
 del f1['coordinateuncertaintyinmeters']
 del f1['coordinateprecision']
-del f1['coordinateuncertaintyinmeters']
 del f1['datasetkey']
 del f1['day']
 del f1['depth']
@@ -46,5 +45,6 @@ con_especiales = ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ']
 sin_especiales = ['A', 'E', 'I', 'O', 'U', 'U', 'NH']
 f2 = f2.replace(con_especiales, sin_especiales, regex=True)
 #categorizar
+
 #Escribir en archivo destino
 f2.to_csv(output2)
