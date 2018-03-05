@@ -34,7 +34,7 @@ del f1['recordnumber']
 del f1['rightsholder']
 del f1['typestatus']
 
-print(f1.head())
+print('borradas columnas de la fuente 1')
 #f2
 #Quitar duplicados
 f2.drop_duplicates(subset=None, inplace=True)
@@ -71,7 +71,7 @@ for filaDT in range(0,len(f2['direccion_territorial'])):
     SinDireccionTerritorial = SinDireccionTerritorial[len("DIRECCION TERRITORIAL"):]
     f2.iloc[filaDT, columna_direccion_territorial] = SinDireccionTerritorial
 
-print(f2.head())
+print('arreglado formato y nombres')
 #categorizar las columnas que estan segmentadas por tipo de visitante
 #0 -> 0
 #1-100 -> 1
@@ -134,7 +134,28 @@ for columnaDT in range(inicio_columnas_totalizadas, fin_columnas_totalizadas):
         categorizado = categorizarTotalizados(categorizado)
         f2.iloc[filaDT, columnaDT] = categorizado
 
-print(f2.head())
+print('categorizado')
 
 #Escribir en archivo destino
-f2.to_csv(output2)
+#columnas segmentadas unicamente, con sus respectivos totales
+#   (es decir, todo lo que este con informacion mensual)
+#columnas totalizadas anualmente
+#   (es decir, todo lo que no tiene datos de todos los meses sino unicamente de enero)
+headers = []
+for columnaDT in range(0, f2.columns.get_loc('total_1995')):
+    headers.append(f2.columns[columnaDT])
+
+for columnaDT in range(f2.columns.get_loc('total_2009'), f2.columns.get_loc('total_2014')+1):
+    headers.append(f2.columns[columnaDT])
+
+print('arreglados headers archivo 1 fuente 2')
+f2.to_csv(output2, columns = headers)
+
+headers = []
+for columnaDT in range(0, f2.columns.get_loc('adultos_nacionales_2011')):
+    headers.append(f2.columns[columnaDT])
+
+for columnaDT in range(f2.columns.get_loc('total_1995'), f2.columns.get_loc('total_2014')+1):
+    headers.append(f2.columns[columnaDT])
+
+print('arreglados headers archivo 2 fuente 2')
