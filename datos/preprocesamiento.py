@@ -4,7 +4,8 @@ import pandas_profiling
 fuente1 = 'Fuente_1_procesar.csv'
 fuente2 = 'Fuente_2_procesar.csv'
 output1 = 'Fuente_1_procesada.csv'
-output2 = 'Fuente_2_procesada.csv'
+output2 = 'Fuente_2_procesada_segmentos.csv'
+output3 = 'Fuente_2_procesada_totales'
 
 f1 = pd.read_csv(fuente1, sep='\t|;')
 print(len(f1))
@@ -71,7 +72,7 @@ for filaDT in range(0,len(f2['direccion_territorial'])):
     f2.iloc[filaDT, columna_direccion_territorial] = SinDireccionTerritorial
 
 print(f2.head())
-#categorizar las columnas
+#categorizar las columnas que estan segmentadas por tipo de visitante
 #0 -> 0
 #1-100 -> 1
 #101-500 -> 2
@@ -95,13 +96,45 @@ def categorizarSegmentados(ingresos):
     else:
         ingresos = 0
     return ingresos
-    
+
 for columnaDT in range(inicio_columnas_segmentadas, fin_columnas_segmentadas):
     for filaDT in range(0, len(f2['adultos_nacionales_2011'])):
         categorizado = f2.iloc[filaDT, columnaDT]
         categorizado = categorizarSegmentados(categorizado)
         f2.iloc[filaDT, columnaDT] = categorizado
 
+#categorizar las columnas que totalizan anualmente
+#0 -> 0
+#1-50 -> 1
+#51-500 -> 2
+#501-2000 -> 3
+#2001-15000 -> 4
+#15001+ -> 5
+def categorizarTotalizados(ingresos):
+    if ingresos > 15000:
+        ingresos = 5
+    elif ingresos > 2000:
+        ingresos = 4
+    elif ingresos > 500:
+        ingresos = 3
+    elif ingresos > 50:
+        ingresos = 2
+    elif ingresos > 1:
+        ingresos = 1
+    else:
+        ingresos = 0
+    return ingresos
+
+inicio_columnas_totalizadas = f2.columns.get_loc('total_1995')
+fin_columnas_totalizadas = f2.columns.get_loc('total_2014')+1
+
+for columnaDT in range(inicio_columnas_totalizadas, fin_columnas_totalizadas):
+    for filaDT in range(0, len(f2['total_1995'])):
+        categorizado = f2.iloc[filaDT, columnaDT]
+        categorizado = categorizarTotalizados(categorizado)
+        f2.iloc[filaDT, columnaDT] = categorizado
+
 print(f2.head())
+
 #Escribir en archivo destino
 f2.to_csv(output2)
