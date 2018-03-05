@@ -44,6 +44,19 @@ f2['mes'] = f2['mes'].str.upper()
 con_especiales = ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ']
 sin_especiales = ['A', 'E', 'I', 'O', 'U', 'U', 'NH']
 f2 = f2.replace(con_especiales, sin_especiales, regex=True)
+#limpiar los nombres de direccion_territorial
+columna_direccion_territorial = f2.columns.get_loc('direccion_territorial')
+columna_area_protegida = f2.columns.get_loc('area_protegida')
+for filaDT in range(0,len(f2['direccion_territorial'])):
+    datico = f2.iloc[filaDT, columna_area_protegida]
+    datico = datico[3:]
+    f2.iloc[filaDT, columna_area_protegida] = datico
+    SinDireccionTerritorial = f2.iloc[filaDT, columna_direccion_territorial]
+    SinDireccionTerritorial = SinDireccionTerritorial[len("DIRECCION TERRITORIAL"):]
+    f2.iloc[filaDT, columna_direccion_territorial] = SinDireccionTerritorial
+
+print(f2.head())
+#limpiar los nombres de area_protegida
 #categorizar
 
 #Escribir en archivo destino
