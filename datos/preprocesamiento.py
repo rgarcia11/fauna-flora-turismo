@@ -44,20 +44,64 @@ f2['mes'] = f2['mes'].str.upper()
 con_especiales = ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ']
 sin_especiales = ['A', 'E', 'I', 'O', 'U', 'U', 'NH']
 f2 = f2.replace(con_especiales, sin_especiales, regex=True)
-#limpiar los nombres de direccion_territorial
+#limpiar los nombres de direccion_territorial y area_protegida
 columna_direccion_territorial = f2.columns.get_loc('direccion_territorial')
 columna_area_protegida = f2.columns.get_loc('area_protegida')
 for filaDT in range(0,len(f2['direccion_territorial'])):
     datico = f2.iloc[filaDT, columna_area_protegida]
-    datico = datico[3:]
+    datico = datico[4:]
+    if datico == 'CUEVA DE LOS GUACHAROS':
+        datico = 'GUACHAROS'
+    elif datico == 'ISLA DE LA COROTA':
+        datico = 'COROTA'
+    elif datico == 'ISLA DE SALAMANCA':
+        datico = 'SALAMANCA'
+    elif datico == 'EL COCUY':
+        datico = 'COCUY'
+    elif datico == 'SIERRA NEVADA':
+        datico = 'SIERRA NEVADA DE SANTA MARTA'
+    elif datico == 'GUANENTA - ALTO RIO FONCE':
+        datico = 'GUANENTA FONCE'
+    elif datico == 'NEVADOS':
+        datico = 'LOS NEVADOS'
+
     f2.iloc[filaDT, columna_area_protegida] = datico
     SinDireccionTerritorial = f2.iloc[filaDT, columna_direccion_territorial]
     SinDireccionTerritorial = SinDireccionTerritorial[len("DIRECCION TERRITORIAL"):]
     f2.iloc[filaDT, columna_direccion_territorial] = SinDireccionTerritorial
 
 print(f2.head())
-#limpiar los nombres de area_protegida
-#categorizar
+#categorizar las columnas
+#0 -> 0
+#1-100 -> 1
+#101-500 -> 2
+#501-1000 -> 3
+#1001-5000 -> 4
+#5001+ -> 5
+inicio_columnas_segmentadas = f2.columns.get_loc('adultos_nacionales_2011')
+fin_columnas_segmentadas = f2.columns.get_loc('total_1995')
 
+def categorizarSegmentados(ingresos):
+    if ingresos > 5000:
+        ingresos = 5
+    elif ingresos > 1000:
+        ingresos = 4
+    elif ingresos > 500:
+        ingresos = 3
+    elif ingresos > 100:
+        ingresos = 2
+    elif ingresos > 1:
+        ingresos = 1
+    else:
+        ingresos = 0
+    return ingresos
+    
+for columnaDT in range(inicio_columnas_segmentadas, fin_columnas_segmentadas):
+    for filaDT in range(0, len(f2['adultos_nacionales_2011'])):
+        categorizado = f2.iloc[filaDT, columnaDT]
+        categorizado = categorizarSegmentados(categorizado)
+        f2.iloc[filaDT, columnaDT] = categorizado
+
+print(f2.head())
 #Escribir en archivo destino
 f2.to_csv(output2)
