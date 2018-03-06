@@ -34,6 +34,7 @@ del f1['rightsholder']
 del f1['typestatus']
 
 print('borradas columnas de la fuente 1')
+f1.to_csv(output1)
 #f2
 #Quitar duplicados
 f2.drop_duplicates(subset=None, inplace=True)
