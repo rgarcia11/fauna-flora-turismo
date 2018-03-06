@@ -72,7 +72,7 @@ for filaDT in range(0,len(f2['direccion_territorial'])):
 
 print('arreglado formato y nombres')
 #Aqui se copia el f2 en f3 para poder manejar por aparte la categorizacion
-f3 = f2
+f3 = f2.copy()
 print(f3.head())
 #categorizar las columnas que estan segmentadas por tipo de visitante
 #0 -> 0
@@ -186,6 +186,13 @@ del f3['adultos_excentos_no_residentes_2011']
 del f3['adultos_excentos_no_residentes_2012']
 del f3['adultos_excentos_no_residentes_2013']
 del f3['adultos_excentos_no_residentes_2014']
-print(f3.head())
+
 print('borradas columnas archivo 2 fuente 2')
+print('filas del tercer archivo antes de sumar por mes: %d' %len(f3))
+todas_las_columnas = list(f3.columns)
+todas_las_columnas.remove('direccion_territorial')
+todas_las_columnas.remove('area_protegida')
+todas_las_columnas.remove('mes')
+f3 = f3.groupby(['direccion_territorial', 'area_protegida'])[todas_las_columnas].sum()
+print('filas del tercer archivo despues de sumar por mes: %d' %len(f3))
 f3.to_csv(output3)
