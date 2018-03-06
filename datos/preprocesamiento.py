@@ -51,17 +51,33 @@ f1 = f1.drop(f1.index[indices_borrar])
 print('longitud archivo 1: %d'%len(f1))
 
 
-
-
-#f2
 #Quitar duplicados
 f2.drop_duplicates(subset=None, inplace=True)
+f1.drop_duplicates(subset=None, inplace=True)
 #Arreglar tildes y simbolos especiales
+f1['kingdom'] = f1['kingdom'].str.upper()
+f1['phylum'] = f1['phylum'].str.upper()
+f1['class'] = f1['class'].str.upper()
+f1['order'] = f1['order'].str.upper()
+f1['family'] = f1['family'].str.upper()
+f1['genus'] = f1['genus'].str.upper()
+f1['species'] = f1['species'].str.upper()
+f1['taxonrank'] = f1['taxonrank'].str.upper()
+f1['scientificname'] = f1['scientificname'].str.upper()
+f1['locality'] = f1['locality'].str.upper()
+f1['scientificname'] = f1['scientificname'].str.upper()
+
 f2['direccion_territorial'] = f2['direccion_territorial'].str.upper()
 f2['area_protegida'] = f2['area_protegida'].str.upper()
 f2['mes'] = f2['mes'].str.upper()
-con_especiales = ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ']
-sin_especiales = ['A', 'E', 'I', 'O', 'U', 'U', 'NH']
+
+con_especiales = ['Á', 'É', 'Í', 'Ó', 'Ú', 'Ü', 'Ñ', 'A±',
+ 'Ã', 'À', 'Â', 'Ä', 'Å', 'Ç', 'È', 'Ê', 'Ë', 'Ì', 'A¡',
+  'Î', 'Ï', 'Ò', 'Ô', 'Õ', 'Ö', 'Š', 'Ù', 'Û', 'Ü', 'Ý', 'Ÿ', 'Ž']
+sin_especiales = ['A', 'E', 'I', 'O', 'U', 'U', 'NH', 'NH',
+ 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'I', 'A',
+  'I', 'I', 'O', 'O', 'O', 'O', 'S', 'U', 'U', 'U', 'Y', 'Y', 'Z']
+f1 = f1.replace(con_especiales, sin_especiales, regex=True)
 f2 = f2.replace(con_especiales, sin_especiales, regex=True)
 #limpiar los nombres de direccion_territorial y area_protegida
 columna_direccion_territorial = f2.columns.get_loc('direccion_territorial')
@@ -91,6 +107,39 @@ for filaDT in range(0,len(f2['direccion_territorial'])):
     SinDireccionTerritorial = SinDireccionTerritorial[len("DIRECCION TERRITORIAL"):]
     f2.iloc[filaDT, columna_direccion_territorial] = SinDireccionTerritorial
 
+def mesANumero(mes):
+    if mes == 'ENERO':
+        mes = 1
+    elif mes == 'FEBRERO':
+        mes = 2
+    elif mes == 'MARZO':
+        mes = 3
+    elif mes == 'ABRIL':
+        mes = 4
+    elif mes == 'MAYO':
+        mes = 5
+    elif mes == 'JUNIO':
+        mes = 6
+    elif mes == 'JULIO':
+        mes = 7
+    elif mes == 'AGOSTO':
+        mes = 8
+    elif mes == 'SEPTIEMBRE':
+        mes = 9
+    elif mes == 'OCTUBRE':
+        mes = 10
+    elif mes == 'NOVIEMBRE':
+        mes = 11
+    elif mes == 'DICIEMBRE':
+        mes = 12
+    return mes
+
+columna_mes = f2.columns.get_loc('mes')
+for filaDT in range(0,len(f2['mes'])):
+    mes = f2.iloc[filaDT, columna_mes]
+    mes = mesANumero(mes)
+    f2.iloc[filaDT, columna_mes] = mes
+
 print('arreglado formato y nombres')
 #Aqui se copia el f2 en f3 para poder manejar por aparte la categorizacion
 f3 = f2.copy()
@@ -118,9 +167,6 @@ def categorizarSegmentados(ingresos):
     else:
         ingresos = 0
     return ingresos
-
-#def mesANumero(mes):
-    #if mes == 'enero'
 
 for columnaDT in range(inicio_columnas_segmentadas, fin_columnas_segmentadas):
     for filaDT in range(0, len(f2['adultos_nacionales_2011'])):
