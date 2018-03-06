@@ -5,14 +5,13 @@ fuente1 = 'Fuente_1_procesar.csv'
 fuente2 = 'Fuente_2_procesar.csv'
 output1 = 'Fuente_1_procesada.csv'
 output2 = 'Fuente_2_procesada_segmentos.csv'
-output3 = 'Fuente_2_procesada_totales'
+output3 = 'Fuente_2_procesada_totales.csv'
 
 f1 = pd.read_csv(fuente1, sep='\t|;')
-print(len(f1))
-print(f1.head())
+print('cargado archivo fuente 1. Filas: %d ' %len(f1))
+
 f2 = pd.read_csv(fuente2)
-print(len(f2))
-print(f2.head())
+print('cargado archivo fuente 2. Filas: %d ' %len(f2))
 
 #Eliminar las columnas segun el analisis de calidad de datos
 #f1
@@ -72,6 +71,9 @@ for filaDT in range(0,len(f2['direccion_territorial'])):
     f2.iloc[filaDT, columna_direccion_territorial] = SinDireccionTerritorial
 
 print('arreglado formato y nombres')
+#Aqui se copia el f2 en f3 para poder manejar por aparte la categorizacion
+f3 = f2
+print(f3.head())
 #categorizar las columnas que estan segmentadas por tipo de visitante
 #0 -> 0
 #1-100 -> 1
@@ -151,11 +153,39 @@ for columnaDT in range(f2.columns.get_loc('total_2009'), f2.columns.get_loc('tot
 print('arreglados headers archivo 1 fuente 2')
 f2.to_csv(output2, columns = headers)
 
-headers = []
-for columnaDT in range(0, f2.columns.get_loc('adultos_nacionales_2011')):
-    headers.append(f2.columns[columnaDT])
 
-for columnaDT in range(f2.columns.get_loc('total_1995'), f2.columns.get_loc('total_2014')+1):
-    headers.append(f2.columns[columnaDT])
-
-print('arreglados headers archivo 2 fuente 2')
+del f3['adultos_nacionales_2011']
+del f3['adultos_nacionales_2012']
+del f3['adultos_nacionales_2013']
+del f3['adultos_nacionales_2014']
+del f3['ninos_y_estudiantes_2011']
+del f3['ninos_y_estudiantes_2012']
+del f3['ninos_y_estudiantes_2013']
+del f3['ninos_y_estudiantes_2014']
+del f3['extranjeros_2011']
+del f3['extranjeros_2012']
+del f3['extranjeros_2013']
+del f3['extranjeros_2014']
+del f3['extranjeros_residentes_2011']
+del f3['extranjeros_residentes_2012']
+del f3['extranjeros_residentes_2013']
+del f3['extranjeros_residentes_2014']
+del f3['ninos_residentes_2011']
+del f3['ninos_residentes_2012']
+del f3['ninos_residentes_2013']
+del f3['ninos_residentes_2014']
+del f3['adultos_residentes_2011']
+del f3['adultos_residentes_2012']
+del f3['adultos_residentes_2013']
+del f3['adultos_residentes_2014']
+del f3['ninos_excentos_no_residentes_2011']
+del f3['ninos_excentos_no_residentes_2012']
+del f3['ninos_excentos_no_residentes_2013']
+del f3['ninos_excentos_no_residentes_2014']
+del f3['adultos_excentos_no_residentes_2011']
+del f3['adultos_excentos_no_residentes_2012']
+del f3['adultos_excentos_no_residentes_2013']
+del f3['adultos_excentos_no_residentes_2014']
+print(f3.head())
+print('borradas columnas archivo 2 fuente 2')
+f3.to_csv(output3)
