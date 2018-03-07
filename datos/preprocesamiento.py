@@ -40,14 +40,33 @@ del f1['identifiedby']
 del f1['recordedby']
 del f1['issue']
 del f1['lastinterpreted']
+del f1['decimallatitude']
+del f1['decimallongitude']
+del f1['specieskey']
+del f1['institutioncode']
+del f1['collectioncode']
+del f1['catalognumber']
+del f1['eventdate']
+del f1['species']
+del f1['taxonrank']
+del f1['genus']
 print('borradas columnas de la fuente 1')
 
 #borrar filas que no sean de Colombia
 print('longitud archivo 1: %d'%len(f1))
 indices_borrar = f1['countrycode'] != 'CO'
 f1 = f1.drop(f1.index[indices_borrar])
+del f1['countrycode']
 indices_borrar = f1['year'] < 1995
 f1 = f1.drop(f1.index[indices_borrar])
+f1['year'].replace('', pd.np.nan, inplace=True)
+f1.dropna(subset=['year'], inplace=True)
+f1['class'].replace('', pd.np.nan, inplace=True)
+f1.dropna(subset=['class'], inplace=True)
+f1['order'].replace('', pd.np.nan, inplace=True)
+f1.dropna(subset=['order'], inplace=True)
+f1['family'].replace('', pd.np.nan, inplace=True)
+f1.dropna(subset=['family'], inplace=True)
 print('longitud archivo 1: %d'%len(f1))
 
 
@@ -60,9 +79,6 @@ f1['phylum'] = f1['phylum'].str.upper()
 f1['class'] = f1['class'].str.upper()
 f1['order'] = f1['order'].str.upper()
 f1['family'] = f1['family'].str.upper()
-f1['genus'] = f1['genus'].str.upper()
-f1['species'] = f1['species'].str.upper()
-f1['taxonrank'] = f1['taxonrank'].str.upper()
 f1['scientificname'] = f1['scientificname'].str.upper()
 f1['locality'] = f1['locality'].str.upper()
 f1['scientificname'] = f1['scientificname'].str.upper()
@@ -222,15 +238,28 @@ parques.append('FONCE')
 
 print(parques)
 def buscarPalabras(localidad):
-    return any(parque in localidad for parque in parques)
+    for parque in parques:
+        if parque in localidad:
+            localidad = parque
+            if localidad == 'CORALES' or localidad == 'ROSARIO':
+                localidad = 'CORALES ROSARIO'
+            elif localidad == 'OTUN' or localidad == 'QUIMBAYA':
+                localidad = 'OTUN QUIMBAYA'
+            elif localidad == 'GUANENTA' or localidad == 'FONCE':
+                localidad = 'GUANENTA FONCE'
+            return localidad
+    return ""
 
 
 columna_locality = f1.columns.get_loc('locality')
 indices_borrar = []
 for filaDT in range(0, len(f1['locality'])):
     localidad = f1.iloc[filaDT, columna_locality]
-    if not buscarPalabras(str(localidad)):
+    localidad = buscarPalabras(str(localidad))
+    if not localidad:
         indices_borrar.append(filaDT)
+    else:
+        f1.iloc[filaDT, columna_locality] = localidad
 
 f1 = f1.drop(f1.index[indices_borrar])
 print('longitud archivo 1: %d'%len(f1))
