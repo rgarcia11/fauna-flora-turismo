@@ -15,10 +15,15 @@ pf3.to_file(outputfile="./fuente_2_procesada_totales.html")
 
 #merge
 
-left = pd.DataFrame({'key': fuente_1['locality'], 'kingdom': fuente_1['kingdom'],
-    'phylum': fuente_1['phylum'], 'class': fuente_1['class'], 'order': fuente_1['order'],
-    'family': fuente_1['family'], 'scientificname': fuente_1['scientificname'], 
-    'locality': fuente_1['locality'], 'month': fuente_1['month'], 'year': fuente_1['year'], 
+left = pd.DataFrame({'key': fuente_1['locality'], 
+    'kingdom': fuente_1['kingdom'],
+    'phylum': fuente_1['phylum'], 
+    'class': fuente_1['class'], 
+    'order': fuente_1['order'],
+    'family': fuente_1['family'], 
+    'scientificname': fuente_1['scientificname'], 
+    'month': fuente_1['month'], 
+    'year': fuente_1['year'], 
     'taxonkey': fuente_1['taxonkey']})
 
 
