@@ -57,7 +57,7 @@ print('longitud archivo 1: %d'%len(f1))
 indices_borrar = f1['countrycode'] != 'CO'
 f1 = f1.drop(f1.index[indices_borrar])
 del f1['countrycode']
-indices_borrar = f1['year'] < 1995
+indices_borrar = f1['year'] < 1991
 f1 = f1.drop(f1.index[indices_borrar])
 f1['year'].replace('', pd.np.nan, inplace=True)
 f1.dropna(subset=['year'], inplace=True)
@@ -260,9 +260,13 @@ for filaDT in range(0, len(f1['locality'])):
         indices_borrar.append(filaDT)
     else:
         f1.iloc[filaDT, columna_locality] = localidad
+        f1.iloc[filaDT, f1.columns.get_loc('year')] = int(f1.iloc[filaDT, f1.columns.get_loc('year')])+4
 
 f1 = f1.drop(f1.index[indices_borrar])
 print('longitud archivo 1: %d'%len(f1))
+#El ultimo paso de la fuente 1 es contar por año y crear una columna con la
+#suma para ese año. Esto es para tener un formato igual al que tiene la f2
+columnaTaxon = ['taxonkey']
 
 #Escribir en archivo destino
 #columnas segmentadas unicamente, con sus respectivos totales
