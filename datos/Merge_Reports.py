@@ -1,9 +1,12 @@
 import pandas as pd
 import pandas_profiling
+from sklearn.cluster import KMeans
+import numpy as np
 
-fuente_1 = pd.read_csv("./Fuente_1_procesada.csv", error_bad_lines = False, sep = ";", encoding = "UTF-8")
+fuente_1 = pd.read_csv("./Fuente_1_procesada.csv", error_bad_lines = False, sep = ",", encoding = "UTF-8")
 fuente_2_segmentos = pd.read_csv("./Fuente_2_procesada_segmentos.csv", error_bad_lines = False, sep = ",", encoding = "UTF-8")
 fuente_2_totales = pd.read_csv("./Fuente_2_procesada_totales.csv", error_bad_lines = False, sep = ",", encoding = "UTF-8")
+fuente_3 = pd.read_csv("./merge_numeric.csv", error_bad_lines = False, sep = ",", encoding = "UTF-8")
 
 pf1 = pandas_profiling.ProfileReport(fuente_1)
 pf2 = pandas_profiling.ProfileReport(fuente_2_segmentos)
@@ -104,3 +107,13 @@ res2 = pd.merge(left, right, on= 'key')
 #save to new csv
 res1.to_csv('./merge_fuente1_segmentos.csv', sep=',')
 res2.to_csv('./merge_fuente1_totales.csv', sep=',')
+
+#Kmeans!
+mat = fuente_3.as_matrix()
+
+km = KMeans(n_clusters=5)
+km.fit(mat)
+labels = km.labels_
+results = pd.DataFrame([fuente_3.index, labels]).T
+fuente_3['kmeans'] = pd.Series(labels, index = fuente_3.index)
+fuente_3.to_csv('./kmeans_results.csv', sep = ',')
